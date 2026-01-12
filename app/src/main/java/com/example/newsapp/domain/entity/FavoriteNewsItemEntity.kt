@@ -25,7 +25,7 @@ data class FavoriteNewsItemEntity(
     val publishedBy: String,
 
     @ColumnInfo(name = "published_at")
-    val publishedAt: Instant,
+    val publishedAt: Long,
 
     @ColumnInfo(name = "image_url")
     val imageUrl: String,

@@ -6,5 +6,6 @@ import com.example.newsapp.domain.model.NewsItem
 data class ProfileScreenState(
     val currentUser: User? = null,
     val favoriteNews: List<NewsItem>? = null,
-    val selectedNewsArticleUrl: String? = null
+    val selectedNewsArticleUrl: String? = null,
+    val userLoadingError: String? = null
 )

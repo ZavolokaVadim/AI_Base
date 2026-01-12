@@ -12,9 +12,9 @@ import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
 @OptIn(ExperimentalTime::class)
-fun NewsItemDto.toModel(): NewsItem {
+fun NewsItemDto.toModel(isFavorite: Boolean = false): NewsItem {
     return NewsItem(
-        id = generateIdFromUrl(url),
+        id = generateNewsItemIdFromUrl(url),
         title = title ?: "No Title",
         url = url,
         description = description ?: "No Description",
@@ -22,7 +22,7 @@ fun NewsItemDto.toModel(): NewsItem {
         publishedAt = publishedAt?.let { Instant.parse(it).toLocalDateTime(TimeZone.currentSystemDefault()) }
             ?: Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
         imageUrl = urlToImage ?: "",
-        isFavorite = false
+        isFavorite = isFavorite
     )
 }
 
@@ -34,7 +34,7 @@ fun FavoriteNewsItemEntity.toModel(): NewsItem {
         url = url,
         description = description,
         publishedBy = publishedBy,
-        publishedAt = publishedAt.toLocalDateTime(TimeZone.currentSystemDefault()),
+        publishedAt = Instant.fromEpochMilliseconds(publishedAt).toLocalDateTime(TimeZone.currentSystemDefault()),
         imageUrl = imageUrl,
         isFavorite = true
     )
@@ -48,13 +48,13 @@ fun NewsItem.toFavoriteNewsItemEntity(savedByUserId: String): FavoriteNewsItemEn
         url = url,
         description = description,
         publishedBy = publishedBy,
-        publishedAt = publishedAt.toInstant(TimeZone.currentSystemDefault()),
+        publishedAt = publishedAt.toInstant(TimeZone.currentSystemDefault()).toEpochMilliseconds(),
         imageUrl = imageUrl,
         savedByUserId = savedByUserId
     )
 }
 
-private fun generateIdFromUrl(url: String?): String {
+fun generateNewsItemIdFromUrl(url: String?): String {
     return if (url != null) {
         MessageDigest.getInstance("MD5")
             .digest(url.toByteArray())

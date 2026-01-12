@@ -13,4 +13,7 @@ interface FavoriteNewsDao {
 
     @Query("DELETE FROM favorite_news WHERE id=:id")
     suspend fun deleteFavoriteNewsItemById(id: String)
+
+    @Query("SELECT * FROM favorite_news")
+    suspend fun getAll(): List<FavoriteNewsItemEntity>
 }

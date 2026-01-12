@@ -10,6 +10,10 @@ class LocalAuthManager(context: Context) {
         sharedPreferences.edit(commit = true) { putString("id", id) }
     }
 
+    fun getCurrentUserId(): String? {
+        return sharedPreferences.getString("id", null)
+    }
+
     fun isLoggedIn(): Boolean {
         return sharedPreferences.getString("id", null) != null
     }

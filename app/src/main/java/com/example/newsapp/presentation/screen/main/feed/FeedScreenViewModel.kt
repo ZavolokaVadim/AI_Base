@@ -2,6 +2,8 @@ package com.example.newsapp.presentation.screen.main.feed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.newsapp.data.repository.FavoriteNewsRepository
+import com.example.newsapp.data.repository.LocalAuthManager
 import com.example.newsapp.data.repository.NewsRepository
 import com.example.newsapp.domain.model.NewsItem
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +17,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FeedScreenViewModel @Inject constructor(
-    private val newsRepository: NewsRepository
+    private val newsRepository: NewsRepository,
+    private val favoriteNewsRepository: FavoriteNewsRepository,
+    private val localAuthManager: LocalAuthManager
 ): ViewModel() {
 
     private val _state = MutableStateFlow(FeedScreenState())
@@ -41,6 +45,19 @@ class FeedScreenViewModel @Inject constructor(
             else it
         }
         _state.update { it.copy(filteredNews = updatedNews) }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            // was favorite, now is untoggled, need to delete from the local DB
+            if (newsItem.isFavorite) {
+                favoriteNewsRepository.removeNewsItemFromFavorite(newsItem.id)
+            }
+            // was not favorite, now is toggled, need to add to the local DB of favorite news
+            else {
+                localAuthManager.getCurrentUserId()?.let { currentUserId ->
+                    favoriteNewsRepository.addNewsItemToFavorite(newsItem, currentUserId)
+                }
+            }
+        }
     }
 
     private fun onSearchQueryChanged(newQuery: String) {

@@ -44,14 +44,15 @@ fun LoginScreen(
     LaunchedEffect(state.loginResult) {
         state.loginResult?.let { loginResult ->
             when(loginResult) {
-                is Result.Success<*> -> {
+                is Result.Success<Unit> -> {
                     onNavigateTo(Screen.Main)
                 }
-                is Result.Failure<*> -> {
+                is Result.Failure<Unit> -> {
                     Toast.makeText(context, loginResult.msg, Toast.LENGTH_LONG).show()
                 }
             }
         }
+
     }
     LoginView(
         state = state,

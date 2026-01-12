@@ -33,8 +33,8 @@ object RepositoryModule {
 
     @Provides
     @Singleton
-    fun provideNewsRepository(httpClient: HttpClient): NewsRepository {
-        return NewsRepository(httpClient)
+    fun provideNewsRepository(httpClient: HttpClient, favoriteNewsDao: FavoriteNewsDao): NewsRepository {
+        return NewsRepository(httpClient, favoriteNewsDao)
     }
 
     @Provides
